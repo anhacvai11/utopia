@@ -20,8 +20,8 @@ rm entrypoint.sh
 rm $file_name
 
 # Tải phiên bản mới của các tệp
-wget https://github.com/bicpter/uam-docker/raw/master/uam-swarm/$file_name
-wget https://github.com/bicpter/uam-docker/raw/master/uam-swarm/entrypoint.sh
+wget https://raw.githubusercontent.com/anhtuan9414/uam-docker/refs/heads/master/uam-swarm/$file_name
+wget https://raw.githubusercontent.com/anhtuan9414/uam-docker/refs/heads/master/uam-swarm/entrypoint_test.sh
 
 # Chạy Docker Compose với biến môi trường PBKEY được cung cấp
 sudo PBKEY=$1 docker-compose -f $file_name up -d
