@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Download and execute ens160-pre-install-uam.sh
-wget https://raw.githubusercontent.com/anhacvai11/utopia/main/vultr-pre-install-uam.sh
-sudo chmod 777 vultr-pre-install-uam.sh
-./vultr-pre-install-uam.sh
+wget https://raw.githubusercontent.com/anhtuan9414/temp-2/refs/heads/main/pre-install-uam-hub.sh
+sudo chmod 777 pre-install-uam-hub.sh
+./pre-install-uam-hub.sh
 
 # Download and execute generate-uam.sh
 wget https://raw.githubusercontent.com/anhacvai11/utopia/main/generate-uam.sh
