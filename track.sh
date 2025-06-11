@@ -193,24 +193,11 @@ echo "PBKEY: $PBKEY"
 echo "Total Threads: $totalThreads"
 
 if [[ $cpu_cores -eq 4 ]]; then
-    if [ $ram_mb -ge 7000 ]; then
-        desired_threads=2
-    else
-        desired_threads=1
-    fi
-
-    if [ $totalThreads -ne $desired_threads ]; then
-        for i in $(seq 1 $totalThreads); do
-            echo "Removing container: uam_$i"
-            sudo docker rm -f uam_$i
-            sudo rm -rf /opt/uam_data/uam_$i
-        done
-        totalThreads=$desired_threads
-        echo -e "${YELLOW}ADJUST THREAD UAM WARNING!!!${NC}"
-        echo -e "${GREEN}Adjusted the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
-
-        send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ ADJUST THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0AAdjusted the number of threads: $oldTotalThreads -> $totalThreads."
-    fi
+    totalThreads=$((totalThreads + 1))
+    echo -e "${YELLOW}ADD THREAD UAM WARNING!!!${NC}"
+    echo -e "${GREEN}Increased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ ADD THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0AIncreased the number of threads: $oldTotalThreads -> $totalThreads."
+    setNewThreadUAM=1
 fi
 
 #if [[ $cpu_cores -eq 8 && $totalThreads -lt 2 ]]; then
