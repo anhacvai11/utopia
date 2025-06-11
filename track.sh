@@ -175,6 +175,33 @@ get_current_block_on_utopian() {
     done
 }
 
+get_current_block_self() {
+    local fromBlock=$(cat lastBlock.txt 2>/dev/null)
+    if [ -z "$fromBlock" ] || [ "$fromBlock" == "null" ]; then
+        fromBlock=184846
+    fi
+    while [ $retry_count -lt $max_retries ]; do
+        currentblock=$(curl -s -X POST http://138.2.128.87:22825/api/1.0 \
+            -H "Content-Type: application/json" \
+            -d '{
+                "method": "getMiningBlocksWithTreasury",
+                "params": {
+                    "fromBlockId": "'"$fromBlock"'",
+                    "limit": "1"
+                },
+                "token": "'"$API_KEY"'"
+            }' | grep -oP '"id":\s*\K\d+')
+    
+        if [ -n "$currentblock" ] && [ "$currentblock" != "null" ]; then
+            break
+        else
+            retry_count=$((retry_count + 1))
+            echo "Attempt $retry_count/$max_retries failed to fetch current block. Retrying in 10 seconds..."
+            sleep 10
+        fi
+    done
+}
+
 get_current_block_self
 
 if [ -z "$currentblock" ] || [ "$currentblock" == "null" ]; then
