@@ -1,4 +1,4 @@
-#!/bin/bashAdd commentMore actions
+#!/bin/bash
 nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
 imageName=debian:bullseye-slim
