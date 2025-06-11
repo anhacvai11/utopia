@@ -192,18 +192,29 @@ setNewThreadUAM=0
 echo "PBKEY: $PBKEY"
 echo "Total Threads: $totalThreads"
 
-if [[ $cpu_cores -eq 4 && $totalThreads -ge 2 ]]; then
-    # Loop through 2 to $totalThreads and remove the containers
-    for i in $(seq 2 $totalThreads); do
-      echo "Removing container: uam_$i"
-      sudo docker rm -f uam_$i
-      sudo rm -rf /opt/uam_data/uam_$i
-    done
-    totalThreads=1
-    echo -e "${YELLOW}DELETE THREAD UAM WARNING!!!${NC}"
-    echo -e "${GREEN}Decreased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ DELETE THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0ADecreased the number of threads: $oldTotalThreads -> $totalThreads."
+if [[ $cpu_cores -eq 4 ]]; then
+    if [[ $totalThreads -gt 2 ]]; then
+        # Nếu đang chạy quá 2 luồng thì xóa bớt về 2
+        for i in $(seq 3 $totalThreads); do
+            echo "Removing container: uam_$i"
+            sudo docker rm -f uam_$i
+            sudo rm -rf /opt/uam_data/uam_$i
+        done
+        totalThreads=2
+        echo -e "${YELLOW}DELETE THREAD UAM WARNING!!!${NC}"
+        echo -e "${GREEN}Decreased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
+        send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ DELETE THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0ADecreased the number of threads: $oldTotalThreads -> $totalThreads."
+    
+    elif [[ $totalThreads -eq 1 ]]; then
+        # Nếu chỉ có 1 luồng thì tạo thêm 1 container uam_2
+        echo "Creating extra container: uam_2"
+        sudo docker run -d --name uam_2 --cap-add=IPC_LOCK --ulimit memlock=-1:-1 tuanna9414/uam:latest /opt/uam/uam --pk "$PBKEY" --no-ui --http 0.0.0.0:8091
+        mkdir -p /opt/uam_data/uam_2
+        totalThreads=2
+        echo -e "${GREEN}Added 1 more thread: totalThreads is now $totalThreads.${NC}"
+    fi
 fi
+
 
 #if [[ $cpu_cores -eq 8 && $totalThreads -lt 2 ]]; then
 #    totalThreads=2
