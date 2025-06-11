@@ -28,8 +28,8 @@ for container in "${containers[@]}"; do
 done
 
 # Telegram Bot Configuration
-BOT_TOKEN=$1
-CHAT_ID=$2
+BOT_TOKEN="7419498593:AAHKlObTyabkIIphfAM7xG0QdYYuuRYz0to"
+CHAT_ID="5423203625"
 
 # Function to send a Telegram notification
 send_telegram_notification() {
@@ -162,33 +162,6 @@ get_current_block_on_utopian() {
           -H 'sec-fetch-site: same-origin' \
           -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
           -H 'x-requested-with: XMLHttpRequest' | grep -o '"block":[0-9]*' | awk -F: '{print $2}' | head -n 1)
-    
-        if [ -n "$currentblock" ] && [ "$currentblock" != "null" ]; then
-            break
-        else
-            retry_count=$((retry_count + 1))
-            echo "Attempt $retry_count/$max_retries failed to fetch current block. Retrying in 10 seconds..."
-            sleep 10
-        fi
-    done
-}
-
-get_current_block_self() {
-    local fromBlock=$(cat lastBlock.txt 2>/dev/null)
-    if [ -z "$fromBlock" ] || [ "$fromBlock" == "null" ]; then
-        fromBlock=184846
-    fi
-    while [ $retry_count -lt $max_retries ]; do
-        currentblock=$(curl -s -X POST http://138.2.128.87:22825/api/1.0 \
-            -H "Content-Type: application/json" \
-            -d '{
-                "method": "getMiningBlocksWithTreasury",
-                "params": {
-                    "fromBlockId": "'"$fromBlock"'",
-                    "limit": "1"
-                },
-                "token": "8998BDA7FCD6E9276260BD466583EBB8"
-            }' | grep -oP '"id":\s*\K\d+')
     
         if [ -n "$currentblock" ] && [ "$currentblock" != "null" ]; then
             break
