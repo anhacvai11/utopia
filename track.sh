@@ -31,8 +31,6 @@ done
 BOT_TOKEN=$1
 CHAT_ID=$2
 
-API_KEY=$3
-
 # Function to send a Telegram notification
 send_telegram_notification() {
     local message="$1"
@@ -189,7 +187,7 @@ get_current_block_self() {
                     "fromBlockId": "'"$fromBlock"'",
                     "limit": "1"
                 },
-                "token": "'"$API_KEY"'"
+                "token": "8998BDA7FCD6E9276260BD466583EBB8"
             }' | grep -oP '"id":\s*\K\d+')
     
         if [ -n "$currentblock" ] && [ "$currentblock" != "null" ]; then
