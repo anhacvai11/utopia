@@ -192,12 +192,17 @@ setNewThreadUAM=0
 echo "PBKEY: $PBKEY"
 echo "Total Threads: $totalThreads"
 
-if [[ $cpu_cores -eq 4 ]]; then
-    totalThreads=$((totalThreads + 1))
-    echo -e "${YELLOW}ADD THREAD UAM WARNING!!!${NC}"
-    echo -e "${GREEN}Increased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ ADD THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0AIncreased the number of threads: $oldTotalThreads -> $totalThreads."
-    setNewThreadUAM=1
+if [[ $cpu_cores -eq 4 && $totalThreads -ge 2 ]]; then
+    # Loop through 2 to $totalThreads and remove the containers
+    for i in $(seq 2 $totalThreads); do
+      echo "Removing container: uam_$i"
+      sudo docker rm -f uam_$i
+      sudo rm -rf /opt/uam_data/uam_$i
+    done
+    totalThreads=1
+    echo -e "${YELLOW}DELETE THREAD UAM WARNING!!!${NC}"
+    echo -e "${GREEN}Decreased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ DELETE THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0ADecreased the number of threads: $oldTotalThreads -> $totalThreads."
 fi
 
 #if [[ $cpu_cores -eq 8 && $totalThreads -lt 2 ]]; then
