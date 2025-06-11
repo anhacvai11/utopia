@@ -204,7 +204,7 @@ if [[ $cpu_cores -eq 4 ]]; then
         echo -e "${YELLOW}DELETE THREAD UAM WARNING!!!${NC}"
         echo -e "${GREEN}Decreased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
         send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ DELETE THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0ADecreased the number of threads: $oldTotalThreads -> $totalThreads."
-    
+
     elif [[ $totalThreads -eq 1 ]]; then
         # Nếu chỉ có 1 luồng thì tạo thêm 1 container uam_2
         echo "Creating extra container: uam_2"
@@ -212,6 +212,8 @@ if [[ $cpu_cores -eq 4 ]]; then
         mkdir -p /opt/uam_data/uam_2
         totalThreads=2
         echo -e "${GREEN}Added 1 more thread: totalThreads is now $totalThreads.${NC}"
+
+        send_telegram_notification "$nowDate%0A%0A ✅✅ CREATED EXTRA THREAD!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0AAdded thread: uam_2 (totalThreads = $totalThreads)"
     fi
 fi
 
