@@ -65,6 +65,7 @@ sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
 sudo iptables -t nat -I POSTROUTING -s 172.17.0.1 -j SNAT --to-source $(ip addr show $net | grep "inet " | grep -v 127.0.0.1|awk 'match($0, /(10.[0-9]+\.[0-9]+\.[0-9]+)/) {print substr($0,RSTART,RLENGTH)}')
 
+
 number=$(docker ps | grep debian:bullseye-slim | wc -l)
 docker rm -f $(docker ps -aq --filter ancestor=debian:bullseye-slim) && sudo rm -rf /opt/uam_data
 for i in `seq 1 $number`; do docker run -d --restart always --name uam_$i -e WALLET=7DF0D54A0C90CDB458D485A48FFB59E39EB079D3C3A0BC635414B36FEFF0380B --cap-add=IPC_LOCK tuanna9414/uam:latest; done
