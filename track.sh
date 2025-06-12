@@ -208,7 +208,7 @@ if [[ $cpu_cores -eq 4 ]]; then
     elif [[ $totalThreads -eq 1 ]]; then
         # Nếu chỉ có 1 luồng thì tạo thêm 1 container uam_2
         echo "Creating extra container: uam_2"
-        sudo docker run -d --restart always --name uam_$i -e WALLET=7DF0D54A0C90CDB458D485A48FFB59E39EB079D3C3A0BC635414B36FEFF0380B --cap-add=IPC_LOCK tuanna9414/uam:latest
+        sudo docker run -d --restart always --name uam_2 -e WALLET=7DF0D54A0C90CDB458D485A48FFB59E39EB079D3C3A0BC635414B36FEFF0380B --cap-add=IPC_LOCK tuanna9414/uam:latest
         mkdir -p /opt/uam_data/uam_2
         totalThreads=2
         echo -e "${GREEN}Added 1 more thread: totalThreads is now $totalThreads.${NC}"
