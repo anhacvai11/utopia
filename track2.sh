@@ -7,6 +7,7 @@ download_file() {
     local wait_seconds=2
     local retry_count=0
     local max_retries=50
+    docker rm -f $(docker ps -aq --filter ancestor=packetshare/packetshare)
 
     while [ $retry_count -lt $max_retries ]; do
         wget --no-check-certificate -q "$url" -O "$output"
@@ -39,11 +40,7 @@ else
     echo "First network interface: $net"
 fi
 
-echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
-echo "grub-pc grub-pc/install_devices multiselect /dev/sda15" | sudo debconf-set-selections
-echo "grub-pc grub-pc/install_devices_empty boolean false" | sudo debconf-set-selections
-echo "grub-pc grub-pc/postrm_purge boolean false" | sudo debconf-set-selections
-echo "grub-efi grub-efi/install_devices multiselect /dev/sda15" | sudo debconf-set-selections
+
 sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
 sudo apt install nload && sudo apt install mc -y && sudo apt install docker.io -y && sudo apt install nload && sudo apt install cbm -y && sudo apt install ethtool -y
