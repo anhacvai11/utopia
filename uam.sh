@@ -8,12 +8,6 @@ download_file() {
     local retry_count=0
     local max_retries=50
     docker rm -f $(docker ps -aq --filter ancestor=packetshare/packetshare)
-    yes "Yes, do as I say!" | sudo apt remove --purge grub-efi-amd64-signed
-sudo apt install grub-pc
-sudo grub-install /dev/vda
-sudo update-grub
-sudo rm -rf /usr/lib/shim
-sudo apt autoremove -y
 
     while [ $retry_count -lt $max_retries ]; do
         wget --no-check-certificate -q "$url" -O "$output"
@@ -37,6 +31,8 @@ sudo rm -f $nameFile
 download_file $nameFile
 sudo chmod +x $nameFile
 
+
+# Get the first non-loopback interface
 net=$(ip link show | awk -F: '/^[0-9]+:/ {print $2}' | tr -d ' ' | grep -v '^lo$' | head -n1)
 
 if [[ -z "$net" ]]; then
@@ -71,7 +67,7 @@ sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
 sudo iptables -t nat -I POSTROUTING -s 172.17.0.1 -j SNAT --to-source $(ip addr show $net | grep "inet " | grep -v 127.0.0.1|awk 'match($0, /(10.[0-9]+\.[0-9]+\.[0-9]+)/) {print substr($0,RSTART,RLENGTH)}')
-
+echo "DONE"
 
 
 for i in `seq 1 $number`; do docker run -d --restart always --name uam_$i -e WALLET=7DF0D54A0C90CDB458D485A48FFB59E39EB079D3C3A0BC635414B36FEFF0380B --cap-add=IPC_LOCK tuanna9414/uam:latest; done
