@@ -206,17 +206,21 @@ if [[ $cpu_cores -eq 4 ]]; then
         send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ DELETE THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0ADecreased the number of threads: $oldTotalThreads -> $totalThreads."
 
     elif [[ $totalThreads -eq 1 ]]; then
-        # Nếu chỉ có 1 luồng thì tạo thêm 1 container uam_2
-        echo "Creating extra container: uam_2"
+        # Nếu chỉ có 1 luồng thì kiểm tra RAM trước khi tạo thêm
+        if (( $(echo "$total_ram >= 7000" | bc -l) )); then
+            echo "Creating extra container: uam_2"
         sudo docker run -d --restart always --name uam_2 -e WALLET=7DF0D54A0C90CDB458D485A48FFB59E39EB079D3C3A0BC635414B36FEFF0380B --cap-add=IPC_LOCK tuanna9414/uam:latest
-        mkdir -p /opt/uam_data/uam_2
-        totalThreads=2
-        echo -e "${GREEN}Added 1 more thread: totalThreads is now $totalThreads.${NC}"
+            mkdir -p /opt/uam_data/uam_2
+            totalThreads=2
+            echo -e "${GREEN}Added 1 more thread: totalThreads is now $totalThreads.${NC}"
 
-        send_telegram_notification "$nowDate%0A%0A ✅✅ CREATED EXTRA THREAD!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0AAdded thread: uam_2 (totalThreads = $totalThreads)"
+            send_telegram_notification "$nowDate%0A%0A ✅✅ CREATED EXTRA THREAD!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0AAdded thread: uam_2 (totalThreads = $totalThreads)"
+        else
+            echo -e "${YELLOW}Not enough RAM to add extra thread (requires >= 7GB). Skipping...${NC}"
+            send_telegram_notification "$nowDate%0A%0A ⚠️ NOT ENOUGH RAM TO CREATE EXTRA THREAD!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime"
+        fi
     fi
 fi
-
 
 #if [[ $cpu_cores -eq 8 && $totalThreads -lt 2 ]]; then
 #    totalThreads=2
