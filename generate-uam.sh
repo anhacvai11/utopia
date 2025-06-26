@@ -20,8 +20,8 @@ rm entrypoint*
 rm $file_name
 
 # Tải phiên bản mới của các tệp
-wget https://github.com/anhacvai11/uam-entry/tree/main/$file_name
-wget https://github.com/anhacvai11/uam-entry/tree/main/entrypoint.sh
+wget https://raw.githubusercontent.com/anhacvai11/uam-entry/refs/heads/main//$file_name
+wget https://raw.githubusercontent.com/anhacvai11/uam-entry/refs/heads/main/entrypoint.sh
 
 # Chạy Docker Compose với biến môi trường PBKEY được cung cấp
 sudo PBKEY=$1 docker-compose -f $file_name up -d
