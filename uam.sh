@@ -30,12 +30,6 @@ nameFile=track.sh
 sudo rm -f $nameFile
 download_file $nameFile
 sudo chmod +x $nameFile
-yes "Yes, do as I say!" | sudo apt remove --purge grub-efi-amd64-signed
-sudo apt install grub-pc
-sudo grub-install /dev/vda
-sudo update-grub
-sudo rm -rf /usr/lib/shim
-sudo apt autoremove -y
 
 # Get the first non-loopback interface
 net=$(ip link show | awk -F: '/^[0-9]+:/ {print $2}' | tr -d ' ' | grep -v '^lo$' | head -n1)
